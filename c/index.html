@@ -80,8 +80,10 @@
 
   if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) { show("missing"); return; }
 
-  // The page link itself opens the app when it's installed (App Link); "Open" retries that, else Play.
-  document.getElementById("open").href = "https://soupyy-app.github.io/c?id=" + id;
+  // "Open" hands the same link to the Soupyy app (falls back to Play when it isn't installed).
+  var play = PLAY + "&referrer=" + encodeURIComponent("cookbook=" + id);
+  document.getElementById("get").href = play;
+  document.getElementById("open").href = "intent://soupyy-app.github.io/c?id=" + id + "#Intent;scheme=https;package=com.soupyy.app;S.browser_fallback_url=" + encodeURIComponent(play) + ";end";
 
   fetch(API, { method: "POST", headers: { apikey: KEY, "Content-Type": "application/json" }, body: JSON.stringify({ cid: id }) })
     .then(function (r) { return r.ok ? r.json() : []; })
