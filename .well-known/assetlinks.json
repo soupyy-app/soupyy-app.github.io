@@ -1,0 +1,11 @@
+[{
+  "relation": ["delegate_permission/common.handle_all_urls"],
+  "target": {
+    "namespace": "android_app",
+    "package_name": "com.soupyy.app",
+    "sha256_cert_fingerprints": [
+      "43:68:56:4C:3F:E3:B5:D1:B7:4E:95:53:72:9D:90:E1:69:AE:16:5D:5D:80:71:2C:AC:AB:E7:58:19:37:6A:CF",
+      "E9:22:AA:81:D2:8D:CF:84:F5:9D:8D:91:3D:51:AC:D8:97:34:C5:26:B7:56:31:DF:D0:44:F3:62:F9:0F:4C:F5"
+    ]
+  }
+}]

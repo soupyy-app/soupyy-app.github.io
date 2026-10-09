@@ -1,0 +1,105 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self' 'unsafe-inline'; style-src 'unsafe-inline' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; img-src 'self' https://apyyrijvmtianbhwrxep.supabase.co; connect-src https://apyyrijvmtianbhwrxep.supabase.co; base-uri 'none'; form-action 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Soupyy recipe</title>
+<meta name="description" content="A recipe shared from Soupyy. Open it in the app to cook along.">
+<meta property="og:title" content="A recipe on Soupyy">
+<meta property="og:description" content="Tap to open it in Soupyy and cook along.">
+<meta property="og:image" content="https://soupyy-app.github.io/card.png">
+<meta property="og:type" content="website">
+<link rel="icon" href="/icon.png">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600&family=Source+Sans+3:wght@400;600&display=swap">
+<style>
+  :root { --bg:#FAF6EC; --surface:#FFFFFF; --surface2:#F3EEE2; --text:#2A211C; --muted:#6B6058; --line:#E8E0D0; --accent:#C2502E; --money:#2E7D32; --moneySoft:#E3F0E3; }
+  @media (prefers-color-scheme: dark) { :root { --bg:#1B1612; --surface:#26201B; --surface2:#2F2822; --text:#F3ECE3; --muted:#B5A99E; --line:#3A322B; --accent:#E07A55; --money:#7BC47F; --moneySoft:#22331F; } }
+  * { box-sizing:border-box; }
+  body { margin:0; background:var(--bg); color:var(--text); font:16px/1.5 "Source Sans 3", system-ui, sans-serif; }
+  main { max-width:480px; margin:0 auto; padding:0 16px 32px; }
+  .brand { display:flex; align-items:center; gap:10px; padding:16px 0; font:600 20px "Fraunces", Georgia, serif; }
+  .brand img { width:32px; height:32px; border-radius:8px; }
+  .cover { width:100%; aspect-ratio:4/3; object-fit:cover; border-radius:20px; background:var(--surface2); display:block; }
+  .letter { width:100%; aspect-ratio:4/3; border-radius:20px; background:var(--surface2); display:flex; align-items:center; justify-content:center; font:600 64px "Fraunces", Georgia, serif; color:var(--muted); }
+  h1 { font:600 28px/1.2 "Fraunces", Georgia, serif; margin:18px 0 6px; }
+  .by { color:var(--muted); font-size:14px; }
+  .pill { display:inline-block; font-size:13px; font-weight:600; padding:2px 10px; border-radius:99px; background:var(--moneySoft); color:var(--money); margin-left:6px; }
+  .desc { color:var(--muted); margin:10px 0 0; }
+  .stats { display:flex; background:var(--surface2); border-radius:16px; padding:12px 16px; margin-top:16px; }
+  .stats div { flex:1; }
+  .stats small { display:block; font-size:11px; letter-spacing:.1em; color:var(--muted); font-weight:600; }
+  .stats b { font:600 20px "Fraunces", Georgia, serif; }
+  .note { font-size:14px; color:var(--muted); margin:16px 0 0; }
+  .btn { display:block; text-align:center; text-decoration:none; font-weight:600; border-radius:99px; padding:14px; margin-top:12px; }
+  .primary { background:var(--accent); color:#fff; }
+  .outline { border:1.5px solid var(--line); color:var(--text); background:var(--surface); }
+  .hidden { display:none; }
+</style>
+</head>
+<body>
+<main>
+  <div class="brand"><img src="/icon.png" alt="">Soupyy</div>
+
+  <section id="recipe" class="hidden" aria-live="polite">
+    <img id="cover" class="cover hidden" alt="">
+    <div id="letter" class="letter hidden" aria-hidden="true"></div>
+    <h1 id="title"></h1>
+    <div class="by"><span id="by"></span><span id="price" class="pill hidden"></span></div>
+    <p id="desc" class="desc"></p>
+    <div class="stats">
+      <div><small>PREP</small><b id="prep"></b></div>
+      <div><small>COOK</small><b id="cook"></b></div>
+      <div><small>SERVES</small><b id="serves"></b></div>
+    </div>
+    <p class="note">Ingredients and steps are in the Soupyy app.</p>
+  </section>
+
+  <section id="missing" class="hidden">
+    <h1>Recipe not found</h1>
+    <p class="desc">It may be private or no longer shared. You can still find more recipes in Soupyy.</p>
+  </section>
+
+  <a id="open" class="btn primary" href="https://play.google.com/store/apps/details?id=com.soupyy.app">Open in Soupyy</a>
+  <a id="get" class="btn outline" href="https://play.google.com/store/apps/details?id=com.soupyy.app">Get Soupyy on Google Play</a>
+</main>
+<script>
+(function () {
+  var API = "https://apyyrijvmtianbhwrxep.supabase.co/rest/v1/rpc/recipe_card";
+  // Publishable key: read-only, and recipe_card only returns public preview fields.
+  var KEY = "sb_publishable_8G43AII5et4DY2VUWt5G2Q_1FkaWPS_";
+  var PLAY = "https://play.google.com/store/apps/details?id=com.soupyy.app";
+  var id = new URLSearchParams(location.search).get("id") || "";
+  var show = function (el) { document.getElementById(el).classList.remove("hidden"); };
+  var set = function (el, v) { document.getElementById(el).textContent = v; };
+  var mins = function (m) { return m > 0 ? m + "m" : "—"; };
+
+  if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(id)) { show("missing"); return; }
+
+  // Play opens the recipe after install (install referrer); "Open" tries the app first, then falls back to Play.
+  var play = PLAY + "&referrer=" + encodeURIComponent("recipe=" + id);
+  document.getElementById("get").href = play;
+  document.getElementById("open").href = "intent://recipe/" + id + "#Intent;scheme=soupyy;package=com.soupyy.app;S.browser_fallback_url=" + encodeURIComponent(play) + ";end";
+
+  fetch(API, { method: "POST", headers: { apikey: KEY, "Content-Type": "application/json" }, body: JSON.stringify({ rid: id }) })
+    .then(function (r) { return r.ok ? r.json() : []; })
+    .then(function (rows) {
+      var r = rows && rows[0];
+      if (!r) { show("missing"); return; }
+      document.title = r.title + " · Soupyy";
+      set("title", r.title);
+      set("by", r.handle ? "by @" + r.handle : "");
+      if (r.price) { set("price", "₹" + r.price); show("price"); }
+      set("desc", r.description || "");
+      set("prep", mins(r.prep)); set("cook", mins(r.cook)); set("serves", r.servings || "—");
+      if (r.photo && r.photo.indexOf("https://apyyrijvmtianbhwrxep.supabase.co/") === 0) {
+        var img = document.getElementById("cover"); img.src = r.photo; img.alt = r.title; show("cover");
+      } else { set("letter", (r.title || "?").charAt(0).toUpperCase()); show("letter"); }
+      show("recipe");
+    })
+    .catch(function () { show("missing"); });
+})();
+</script>
+</body>
+</html>
